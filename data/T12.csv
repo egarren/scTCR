@@ -1,0 +1,13 @@
+[gene-expression],,,,
+reference,/home/eha8/ref_genomes/mm39,,,
+expect-cells,10000,,,
+no-secondary,TRUE,,,
+[vdj],,,,
+reference,/home/eha8/ref_genomes/mm39_vdj,,,
+,,,,
+[libraries],,# Table describing the input sequencing libraries. Must contain the header and 1 or more rows. Required.,,
+fastq_id,fastqs,lanes,feature_types,subsample_rate
+GEX_2B_T12_M21,/n/scratch3/users/e/eha8/Rsessions/20221020_scTfh/fastq/gex/GEX_POOL_MAY15_GEX_2B_T12_M21_SI-GA-F11,any,gene expression,
+GEX_2B2_T12_M21,/n/scratch3/users/e/eha8/Rsessions/20221020_scTfh/fastq/gex/JULY18_POOL_GEX_2B2_T12_M21_SI-GA-F11,any,gene expression,
+GEX_4_T12_M21_F11,/n/scratch3/users/e/eha8/Rsessions/20221020_scTfh/fastq/gex/MARCH11_POOL_GEX_4_T12_M21_F11_SI-GA-F11,any,gene expression,
+VDJ_2B_T12_M21,/n/scratch3/users/e/eha8/Rsessions/20221020_scTfh/fastq/vdj/VDJ_POOL_MAY15_VDJ_2B_T12_M21_SI-GA-G11,any,vdj-t,
