@@ -22,10 +22,11 @@ NB: Expected total run time is 3-5 days
 [AlphaFold](https://github.com/deepmind/alphafold) v2.1.1\
 [GIANA](https://github.com/s175573/GIANA) v4.1\
 [tcrdist3](https://github.com/kmayerb/tcrdist3) v0.2.2\
+[GLIPH](http://50.255.35.37:8080/) v2\
 [DeepTCR](https://github.com/sidhomj/DeepTCR) v2.1.0
 
 
-[GLIPH](http://50.255.35.37:8080/) v2\
+
 
 <ins>R (v4.1.1) packages</ins>\
 ggalluvial_0.12.3\
