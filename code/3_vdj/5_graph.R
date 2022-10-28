@@ -25,8 +25,10 @@ quantile_breaks <- function(xs, n = 100) {
   breaks[!duplicated(breaks)]
 }
 
+setwd("/n/scratch3/users/e/eha8/Rsessions/20221022_scTfh")
 load("clone_ba.data.RData")
 
+i="GLIPH2"
 for(i in c("GLIPH2","TCRdist",'GIANA',"CDR3b","deepTCR","CDR3ba")){
   if(i=="GLIPH2"){
     res<-read.csv("P7436_LL1J9NOFBB.csv",header=T)
@@ -73,6 +75,7 @@ for(i in c("GLIPH2","TCRdist",'GIANA',"CDR3b","deepTCR","CDR3ba")){
     cells.res<-left_join(cells2,cluster.df[,c("clone_ID","TCRgroup")],by="clone_ID",keep=F)
 
   }
+  save(list=c("cells.res"),file=paste0(i,".clone_ba.data.RData"))
   
   ####Network plot
   ###CDR3 Network Analysis by condition
@@ -201,7 +204,7 @@ for(i in c("GLIPH2","TCRdist",'GIANA',"CDR3b","deepTCR","CDR3ba")){
   sample_count<-rowSums(clone_size_tab>0)
   # min_total_size <- 2
   plt_mtx <- clone_size_tab
-  plt_mtx_scale <- 100 * apply(plt_mtx, 2, function(x){x/sum(x)})
+  plt_mtx_scale<-plt_mtx/rowSums(plt_mtx)*100
   plt_mtx_scale_cap <- pmin(plt_mtx_scale, quantile(plt_mtx_scale, 0.94))
   annot.col<-data.frame(BMChimera=metadata$condition)
   annot.col$BMChimera[annot.col$BMChimera %in% "AID"]<-"B6"
@@ -210,14 +213,26 @@ for(i in c("GLIPH2","TCRdist",'GIANA',"CDR3b","deepTCR","CDR3ba")){
   annot.row<-clone_sizes[clone_sizes$TCRgroup %in% rownames(plt_mtx_scale_cap), ] %>% remove_rownames %>% column_to_rownames(var="TCRgroup")
   p <- pheatmap(plt_mtx_scale_cap, 
                 cluster_rows = TRUE,cluster_cols = TRUE,clustering_method = "ward.D2",show_rownames = F, treeheight_row=3,treeheight_col=3,
-                # color = rev(colorRampPalette(c("#67001F", "#B2182B", "#D6604D", "#FFFFFF"))(100)),
-                color = colorRampPalette(c("white", "red"))(100),
+                color = rev(colorRampPalette(c("#67001F", "#B2182B", "#D6604D", "#FFFFFF"))(100)),
+                # color = colorRampPalette(c("white", "red"))(100),
                 fontsize = 8,fontsize_col = 8,fontsize_row=8,
                 annotation_col=annot.col,annotation_names_col=F,annotation_names_row=F,
                 annotation_colors=list(BMChimera=c("B6"=hue_pal()(2)[1],"564Igi"=hue_pal()(2)[2])),
                 annotation_row=annot.row,
                 silent = T)
   png(paste0(i,".mice.heatmap.all.png"), width = 5, height = 7, res = 200,units="in")
+  grid.arrange(p$gtable)
+  dev.off()
+  p <- pheatmap(plt_mtx_scale_cap, 
+                cluster_rows = TRUE,cluster_cols = TRUE,clustering_method = "ward.D2",show_rownames = F,show_colnames=F, treeheight_row=3,treeheight_col=3,
+                # color = rev(colorRampPalette(c("#67001F", "#B2182B", "#D6604D", "#FFFFFF"))(100)),
+                color = rev(colorRampPalette(c("#67001F", "#B2182B", "#D6604D", "#FFFFFF"))(100)),
+                fontsize = 8,fontsize_col = 8,fontsize_row=8,
+                annotation_col=annot.col,annotation_names_col=F,annotation_names_row=F,
+                annotation_colors=list(BMChimera=c("B6"=hue_pal()(2)[1],"564Igi"=hue_pal()(2)[2])),
+                # annotation_row=annot.row,
+                silent = T)
+  png(paste0(i,".mice.heatmap.all2.png"), width = 3.5, height = 3, res = 200,units="in")
   grid.arrange(p$gtable)
   dev.off()
   
@@ -261,8 +276,8 @@ for(i in c("GLIPH2","TCRdist",'GIANA',"CDR3b","deepTCR","CDR3ba")){
            is.corr = F,
            type="upper", order="original",method = "circle",
            outline = T,
-           # col = rev(colorRampPalette(c("#67001F", "#B2182B", "#D6604D", "#FFFFFF"))(100)),
-           col = colorRampPalette(c("white", "red"))(100),
+           col = rev(colorRampPalette(c("#67001F", "#B2182B", "#D6604D", "#FFFFFF"))(100)),
+           # col = colorRampPalette(c("white", "red"))(100),
            mar = c(0, 0, 0, 0),
            tl.col = tl_col,
            tl.pos = 'td', #tl.cex = 2,
@@ -374,7 +389,7 @@ for(i in c("GLIPH2","TCRdist",'GIANA',"CDR3b","deepTCR","CDR3ba")){
   sample_count<-rowSums(clone_size_tab>0)
   # min_total_size <- 2
   plt_mtx <- clone_size_tab
-  plt_mtx_scale <- 100 * apply(plt_mtx, 2, function(x){x/sum(x)})
+  plt_mtx_scale<-plt_mtx/rowSums(plt_mtx)*100
   plt_mtx_scale_cap <- pmin(plt_mtx_scale, quantile(plt_mtx_scale, 0.94))
   annot.col<-data.frame(Cluster=unique(cells.res.seurat$my.clusters2))
   rownames(annot.col)<-annot.col$Cluster
@@ -383,8 +398,8 @@ for(i in c("GLIPH2","TCRdist",'GIANA',"CDR3b","deepTCR","CDR3ba")){
   annot.row<-clone_sizes.seurat[clone_sizes.seurat$TCRgroup %in% rownames(plt_mtx_scale_cap), ] %>% remove_rownames %>% column_to_rownames(var="TCRgroup")
   p <- pheatmap(plt_mtx_scale_cap, 
                 cluster_rows = TRUE,cluster_cols = TRUE,clustering_method = "ward.D2",show_rownames = F, treeheight_row=5,treeheight_col=2,
-                # color = rev(colorRampPalette(c("#67001F", "#B2182B", "#D6604D", "#FFFFFF"))(100)),
-                color = colorRampPalette(c("white", "red"))(100),
+                color = rev(colorRampPalette(c("#67001F", "#B2182B", "#D6604D", "#FFFFFF"))(100)),
+                # color = colorRampPalette(c("white", "red"))(100),
                 fontsize = 8,fontsize_col = 8,fontsize_row=8,
                 annotation_col=annot.col,annotation_names_col=F,annotation_names_row=F,
                 annotation_colors=list(Cluster=c("TFR"=hue_pal()(8)[1],"Sostdc1"=hue_pal()(8)[2],"TFH-Tcf1"=hue_pal()(8)[3],"TFH-Exhausted"=hue_pal()(8)[4],
@@ -419,11 +434,11 @@ for(i in c("GLIPH2","TCRdist",'GIANA',"CDR3b","deepTCR","CDR3ba")){
   tl_col <- color_vec$color[order(match(color_vec$Var1,rownames(sim_scores)))]
   sim_scores_cap <- pmin(sim_scores, quantile(sim_scores, 0.95, na.rm = T))
   #plot
-  png(paste0(i,".clonotype.cluster.TRSS.png"), width = 8, height = 6, res = 200,units="in")
+  png(paste0(i,".clonotype.cluster.TRSS.png"), width = 4, height = 4, res = 200,units="in")
   layout(matrix(c(1,1, rep(2,8)), nrow = 10, ncol = 1, byrow = TRUE))
   # layout(matrix(c(1, 2, 3), nrow = 3, ncol = 1, byrow = TRUE))
   # dendrogram
-  par(mar=c(0,15.5, 7, 13.2)) #must adjust to align dendrogram
+  par(mar=c(0,7.6, 5, 3.8)) #must adjust to align dendrogram
   dend <- as.dendrogram(hc)
   dend %>% plot()
   # dend %>% set("labels", "") %>% plot()

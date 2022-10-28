@@ -16,14 +16,17 @@ quantile_breaks <- function(xs, n = 100) {
   breaks[!duplicated(breaks)]
 }
 
+
+load("clone_ba.data.RData")
+
 metadata<-read.csv("/home/eha8/metadata/Tcell.metadata.csv", header=T) #define path
 metadata[] <- lapply(metadata, as.character)
 
 #load cdr3 data
 mice<-metadata$T.sampleID
 for (i in mice){
-  csv.path<-paste0("/data/cellranger/",i,"/outs/per_sample_outs/",i,"/vdj_t/filtered_contig_annotations.csv")
-  fasta.path<-paste0("/data/",i,"/outs/per_sample_outs/",i,"/vdj_t/filtered_contig.fasta")
+  csv.path<-paste0("/n/scratch3/users/e/eha8/Rsessions/20221022_scTfh/cellranger/",i,"/outs/per_sample_outs/",i,"/vdj_t/filtered_contig_annotations.csv")
+  fasta.path<-paste0("/n/scratch3/users/e/eha8/Rsessions/20221022_scTfh/cellranger/",i,"/outs/per_sample_outs/",i,"/vdj_t/filtered_contig.fasta")
   df<-merge(read.csv(csv.path, header=T),read.fasta(fasta.path),by.x="contig_id",by.y="seq.name")
   colnames(df)[colnames(df)=="length"]<-"vdj_length"
   # df$T.sampleID<-i
@@ -35,7 +38,7 @@ for (i in mice){
   assign(paste0(i,".vdj"),barcoder(get(paste0(i,".vdj")),prefix=paste0(i,"_")))
 }
 Tall.vdj<-rbind(T1.vdj,T2.vdj,T3.vdj,T4.vdj,T7.vdj,T8.vdj,T11.vdj,T12.vdj,T34.vdj,T36.vdj)
-
+save.image("temp.vdj.only.RData")
 
 load("graphed.RData")
 #extract and add Seurat metadata
@@ -72,7 +75,7 @@ total_size <- rowSums(clone_size_tab)
 sample_count<-rowSums(clone_size_tab>0)
 # min_total_size <- 2
 plt_mtx <- clone_size_tab
-plt_mtx_scale <- 100 * apply(plt_mtx, 2, function(x){x/sum(x)})
+plt_mtx_scale<-plt_mtx/rowSums(plt_mtx)*100
 plt_mtx_scale_cap <- pmin(plt_mtx_scale, quantile(plt_mtx_scale, 0.94))
 annot.col<-data.frame(BMChimera=metadata$condition)
 annot.col$BMChimera[annot.col$BMChimera %in% "AID"]<-"B6"
@@ -98,7 +101,7 @@ total_size <- rowSums(clone_size_tab)
 sample_count<-rowSums(clone_size_tab>0)
 min_total_size <- 2
 plt_mtx <- clone_size_tab[total_size > min_total_size & sample_count>1,]
-plt_mtx_scale <- 100 * apply(plt_mtx, 2, function(x){x/sum(x)})
+plt_mtx_scale<-plt_mtx/rowSums(plt_mtx)*100
 plt_mtx_scale_cap <- pmin(plt_mtx_scale, quantile(plt_mtx_scale, 0.94))
 annot.col<-data.frame(BMChimera=metadata$condition)
 annot.col$BMChimera[annot.col$BMChimera %in% "AID"]<-"B6"
@@ -136,8 +139,6 @@ sim_scores <- sapply(mice_vec, function(x) {
 color_vec <-unique(metadata[,c("condition","mouse_ID")])
 color_vec$color<-hue_pal()(2)[1]
 color_vec$color[color_vec$condition=="m564"]<-hue_pal()(2)[2]
-# color_vec<-as.data.frame(table(cells$my.clusters2))
-# color_vec$color<-hue_pal()(8)
 bh_dist <- -log10(sim_scores)
 bh_dist <- pmin(bh_dist, 10*max(bh_dist[!is.infinite(bh_dist)]))
 hc <- hclust(as.dist(bh_dist), method = "ward.D")
@@ -148,13 +149,9 @@ sim_scores_cap <- pmin(sim_scores, quantile(sim_scores, 0.95, na.rm = T))
 #plot
 png("clonotype.mice.TRSS.png", width = 3, height = 3, res = 200,units="in")
 layout(matrix(c(1,1, rep(2,8)), nrow = 10, ncol = 1, byrow = TRUE))
-# layout(matrix(c(1, 2, 3), nrow = 3, ncol = 1, byrow = TRUE))
-# dendrogram
 par(mar=c(0, 2.7, 3.25, 3)) #must adjust to align dendrogram
 dend <- as.dendrogram(hc)
 dend %>% plot()
-# dend %>% set("labels", "") %>% plot()
-## corrplot
 corrplot(sim_scores_cap*100,
          is.corr = F,
          type="upper", order="original",method = "circle",
@@ -179,11 +176,8 @@ for(i in c("AID","m564")){
     mutate(size_cat = factor(size_cat, levels = rev(c("1", "2", "5", "10","20","50+"))))
   cluster_size_df <- cells %>% 
     filter(condition==i) %>%
-    # filter(seurat_clusters %in% c(0, 1)) %>% 
     group_by(mouse_ID) %>% tally(name = "cluster_size")
   cluster_size_df$cluster_size2<-paste0("n=",cluster_size_df$cluster_size)
-  # condition.labs<-c("B6","564Igi")
-  # names(condition.labs)<-c("AID","m564")
   p<- ggplot(clone_size_df) +
     geom_bar(aes(x = 1, y = clone_size, fill = size_cat),
              stat = "identity", size = 0, color = NA, position = position_fill()) +
@@ -233,8 +227,6 @@ df.cluster<-cells.seurat
 for(k in c("m564","AID")){
   meta2<-metadata[metadata$condition==k,]
   meta<-data.frame(mouse_ID=names(table(meta2$mouse_ID))) #blank dataframe of mice (to fill in upcoming loop)
-  # if(k=="AID"){meta$condition<-"WT"}else{meta$condition<-"564Igi"}
-  # meta$my.clusters2<-i
   for(l in c("shannon","simpson","invsimpson")){
     meta[[l]]<-0
     for (j in 1:nrow(meta)) {
@@ -248,11 +240,6 @@ df<-rbindlist(df.list)
 df3<-left_join(as.data.frame(df),metadata[,c("mouse_ID","condition")],keep=F, by="mouse_ID")
 df3<-df3[order(df3$condition),]
 write.xlsx(df3,"div.mice.xlsx",showNA=F,row.names=F)
-
-
-#network plot
-
-
 
 #################################
 
@@ -271,14 +258,11 @@ clone_condition$condition[clone_condition$cdr3_ba %in% inter]<-"Both"
 clone_size_tab <- table(cells.seurat$cdr3_ba,cells.seurat$my.clusters2)
 total_size <- rowSums(clone_size_tab)
 sample_count<-rowSums(clone_size_tab>0)
-# min_total_size <- 2
 plt_mtx <- clone_size_tab
-plt_mtx_scale <- 100 * apply(plt_mtx, 2, function(x){x/sum(x)})
+plt_mtx_scale<-plt_mtx/rowSums(plt_mtx)*100
 plt_mtx_scale_cap <- pmin(plt_mtx_scale, quantile(plt_mtx_scale, 0.94))
 annot.col<-data.frame(Cluster=unique(cells.seurat$my.clusters2))
 rownames(annot.col)<-annot.col$Cluster
-# color_key<-as.list(hue_pal()(8))
-# names(color_key)<-names(table(cells.seurat$my.clusters2))
 annot.row<-clone_sizes.seurat[clone_sizes.seurat$cdr3_ba %in% rownames(plt_mtx_scale_cap), ] %>% remove_rownames %>% column_to_rownames(var="cdr3_ba")
 p <- pheatmap(plt_mtx_scale_cap, 
               cluster_rows = TRUE,cluster_cols = TRUE,clustering_method = "ward.D2",show_rownames = F, treeheight_row=0,treeheight_col=0,
@@ -300,21 +284,17 @@ total_size <- rowSums(clone_size_tab)
 sample_count<-rowSums(clone_size_tab>0)
 min_total_size <- 2
 plt_mtx <- clone_size_tab[total_size > min_total_size & sample_count>1,]
-plt_mtx_scale <- 100 * apply(plt_mtx, 2, function(x){x/sum(x)})
+plt_mtx_scale<-plt_mtx/rowSums(plt_mtx)*100
 plt_mtx_scale_cap <- pmin(plt_mtx_scale, quantile(plt_mtx_scale, 0.94))
 annot.col<-data.frame(Cluster=unique(cells.seurat$my.clusters2))
 rownames(annot.col)<-annot.col$Cluster
-# color_key<-as.list(hue_pal()(8))
-# names(color_key)<-names(table(cells.seurat$my.clusters2))
 annot.row<-clone_sizes.seurat[clone_sizes.seurat$cdr3_ba %in% rownames(plt_mtx_scale_cap), ] 
 annot.row<-merge(annot.row,clone_condition,by="cdr3_ba",keep=F)
 names(annot.row)[names(annot.row) == "condition"] <- "BMChimera"
-# names(annot.row)[names(annot.row) == "cdr3.freq"] <- "Clone Size"
 annot.row <-annot.row %>% remove_rownames %>% column_to_rownames(var="cdr3_ba")
 p <- pheatmap(plt_mtx_scale_cap, 
               cluster_rows = TRUE,cluster_cols = TRUE,clustering_method = "ward.D2",show_rownames = F, 
               color = rev(colorRampPalette(c("#67001F", "#B2182B", "#D6604D", "#FFFFFF"))(100)),
-              # color = colorRampPalette(c("white", "red"))(100),
               fontsize = 8,fontsize_col = 8,fontsize_row=8,treeheight_col=5,treeheight_row=5,
               annotation_col=annot.col,annotation_names_col=F,annotation_names_row=F,
               annotation_colors=list(Cluster=c("TFR"=hue_pal()(8)[1],"Sostdc1"=hue_pal()(8)[2],"TFH-Tcf1"=hue_pal()(8)[3],"TFH-Exhausted"=hue_pal()(8)[4],
@@ -335,28 +315,21 @@ cells.NAlabel<-cells
 cells.NAlabel$my.clusters2<-as.character(cells.NAlabel$my.clusters2)
 cells.NAlabel$my.clusters2[is.na(cells.NAlabel$my.clusters2)]<-"NA"
 clone_size_tab <- table(cells.NAlabel$cdr3_ba,cells.NAlabel$my.clusters2)
-# total_size <- rowSums(clone_size_tab)
-# sample_count<-rowSums(clone_size_tab>0)
-# min_total_size <- 2
 plt_mtx <- clone_size_tab[rownames(clone_size_tab) %in% TCR.select,]
 empty<-colSums(plt_mtx)==0
 plt_mtx<-plt_mtx[ , !empty]
 plt_mtx<-plt_mtx[,-which(colnames(plt_mtx) %in% c("NA"))]
-plt_mtx_scale <- 100 * apply(plt_mtx, 2, function(x){x/sum(x)})
+plt_mtx_scale<-plt_mtx/rowSums(plt_mtx)*100
 plt_mtx_scale_cap <- pmin(plt_mtx_scale, quantile(plt_mtx_scale, 0.94))
 annot.col<-data.frame(Cluster=unique(cells.NAlabel$my.clusters2))
 rownames(annot.col)<-annot.col$Cluster
-# color_key<-as.list(c(hue_pal()(8)[-6],"grey"))
-# names(color_key)<-c("TFR","Sostdc1","TFH-Tcf1","TFH-Exhausted","TFH-Activated","TFH-Effector","TFH-ISG","NA")
 annot.row<-clone_sizes[clone_sizes$cdr3_ba %in% rownames(plt_mtx_scale_cap), ] 
 annot.row<-merge(annot.row,clone_condition,by="cdr3_ba",keep=F)
 names(annot.row)[names(annot.row) == "condition"] <- "BMChimera"
-# names(annot.row)[names(annot.row) == "cdr3.freq"] <- "Clone Size"
 annot.row <-annot.row %>% remove_rownames %>% column_to_rownames(var="cdr3_ba")
 p <- pheatmap(plt_mtx_scale_cap, 
               cluster_rows = TRUE,cluster_cols = TRUE,clustering_method = "ward.D2",show_rownames = T, 
               color = rev(colorRampPalette(c("#67001F", "#B2182B", "#D6604D", "#FFFFFF"))(100)),
-              # color = colorRampPalette(c("white", "red"))(100),
               fontsize = 8,fontsize_col = 8,fontsize_row=8,treeheight_col=5,treeheight_row=5,
               annotation_col=annot.col,annotation_names_col=F,annotation_names_row=F,
               annotation_colors=list(Cluster=c("TFR"=hue_pal()(8)[1],"Sostdc1"=hue_pal()(8)[2],"TFH-Tcf1"=hue_pal()(8)[3],"TFH-Exhausted"=hue_pal()(8)[4],
@@ -395,12 +368,9 @@ sim_scores_cap <- pmin(sim_scores, quantile(sim_scores, 0.95, na.rm = T))
 #plot
 png("clonotype.cluster.TRSS.png", width = 8, height = 6, res = 200,units="in")
 layout(matrix(c(1,1, rep(2,8)), nrow = 10, ncol = 1, byrow = TRUE))
-# layout(matrix(c(1, 2, 3), nrow = 3, ncol = 1, byrow = TRUE))
-# dendrogram
 par(mar=c(0,15.5, 7, 13.2)) #must adjust to align dendrogram
 dend <- as.dendrogram(hc)
 dend %>% plot()
-# dend %>% set("labels", "") %>% plot()
 ## corrplot
 corrplot(sim_scores_cap,
          is.corr = F,
@@ -417,14 +387,12 @@ dev.off()
 
 #size pie charts (condition vs mouseID)
 clone_size_df <- cells.seurat %>% 
-  # filter(seurat_clusters %in% c(0, 1)) %>% 
   group_by(my.clusters2, cdr3_ba, condition) %>% 
   tally(name = "clone_size") %>% 
   mutate(size_cat = cut(clone_size, breaks = c(0, 1, 4, 9, 19, 49, Inf), 
                         labels = c("1", "2", "5", "10","20","50+"))) %>% 
   mutate(size_cat = factor(size_cat, levels = rev(c("1", "2", "5", "10","20","50+"))))
 cluster_size_df <- cells.seurat %>% 
-  # filter(seurat_clusters %in% c(0, 1)) %>% 
   group_by(my.clusters2, condition) %>% tally(name = "cluster_size")
 cluster_size_df$cluster_size2<-paste0("n=",cluster_size_df$cluster_size)
 condition.labs<-c("B6","564Igi")
@@ -528,7 +496,6 @@ df3<-df3[order(df3$condition),]
 write.xlsx(df3,"div.cluster.mice.xlsx",showNA=F,row.names=F)
 
 
-
 ####export data
 head(cells)
 clone_sizes<-as.data.frame(table(cells$cdr3_ba))
@@ -568,6 +535,7 @@ for(i in unique(imgt.cells$epitope)){
   df<-unique(df[,c("cdr3_b_aa","v_b_gene","j_b_gene")])
   write.table(df, file = paste0(i,"_tutorial.txt"), sep = "\t",row.names = FALSE,col.names=F,quote=F)
 }
+##use mouse genes (replace GIANA inbuilt IMGT human file)
 library(ampir)
 df<-read.csv(file="TRgene.match.csv")
 df<-df[df$organism=="mouse" & df$chain=="B"& df$region=="V",c("id","aligned_protseq")]
