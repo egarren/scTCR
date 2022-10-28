@@ -25,10 +25,10 @@ quantile_breaks <- function(xs, n = 100) {
   breaks[!duplicated(breaks)]
 }
 
-setwd("/n/scratch3/users/e/eha8/Rsessions/20221022_scTfh")
+
 load("clone_ba.data.RData")
 
-i="GLIPH2"
+
 for(i in c("GLIPH2","TCRdist",'GIANA',"CDR3b","deepTCR","CDR3ba")){
   if(i=="GLIPH2"){
     res<-read.csv("P7436_LL1J9NOFBB.csv",header=T)
@@ -183,10 +183,7 @@ for(i in c("GLIPH2","TCRdist",'GIANA',"CDR3b","deepTCR","CDR3ba")){
   labels<-unique(labels[,c("CDR3.aa","sum.564","sum.AID")])
   p<-ggplot(pr.res.GLIPH,aes(x = sum.564, y =  sum.AID,size=number_subject))+theme_classic()+
     scale_x_continuous(trans='log10') +scale_y_continuous(trans='log10')+ scale_size(range = c(1, 10))+
-    # geom_point(aes(colour=factor(annotate),fill = factor(annotate)), shape=21) + 
     geom_point(alpha=0.25,aes(colour=number_unique_cdr3))+ #tfr.score
-    # scale_color_manual(values = c(alpha("black",0.5),"black","red"))+
-    # scale_fill_manual(values = c("#1C00ff00",alpha("black",0.2),alpha("red",0.2)))+
     guides(fill = guide_legend(override.aes = list(size = 7)))+#,color=F)+ #,size=F
     labs(x = "564Igi", y = "B6", size="Samples",color="Clones")+
     theme(legend.direction = "vertical", legend.box = "horizontal")
@@ -214,7 +211,6 @@ for(i in c("GLIPH2","TCRdist",'GIANA',"CDR3b","deepTCR","CDR3ba")){
   p <- pheatmap(plt_mtx_scale_cap, 
                 cluster_rows = TRUE,cluster_cols = TRUE,clustering_method = "ward.D2",show_rownames = F, treeheight_row=3,treeheight_col=3,
                 color = rev(colorRampPalette(c("#67001F", "#B2182B", "#D6604D", "#FFFFFF"))(100)),
-                # color = colorRampPalette(c("white", "red"))(100),
                 fontsize = 8,fontsize_col = 8,fontsize_row=8,
                 annotation_col=annot.col,annotation_names_col=F,annotation_names_row=F,
                 annotation_colors=list(BMChimera=c("B6"=hue_pal()(2)[1],"564Igi"=hue_pal()(2)[2])),
@@ -225,12 +221,10 @@ for(i in c("GLIPH2","TCRdist",'GIANA',"CDR3b","deepTCR","CDR3ba")){
   dev.off()
   p <- pheatmap(plt_mtx_scale_cap, 
                 cluster_rows = TRUE,cluster_cols = TRUE,clustering_method = "ward.D2",show_rownames = F,show_colnames=F, treeheight_row=3,treeheight_col=3,
-                # color = rev(colorRampPalette(c("#67001F", "#B2182B", "#D6604D", "#FFFFFF"))(100)),
                 color = rev(colorRampPalette(c("#67001F", "#B2182B", "#D6604D", "#FFFFFF"))(100)),
                 fontsize = 8,fontsize_col = 8,fontsize_row=8,
                 annotation_col=annot.col,annotation_names_col=F,annotation_names_row=F,
                 annotation_colors=list(BMChimera=c("B6"=hue_pal()(2)[1],"564Igi"=hue_pal()(2)[2])),
-                # annotation_row=annot.row,
                 silent = T)
   png(paste0(i,".mice.heatmap.all2.png"), width = 3.5, height = 3, res = 200,units="in")
   grid.arrange(p$gtable)
@@ -253,8 +247,6 @@ for(i in c("GLIPH2","TCRdist",'GIANA',"CDR3b","deepTCR","CDR3ba")){
   color_vec <-unique(metadata[,c("condition","mouse_ID")])
   color_vec$color<-hue_pal()(2)[1]
   color_vec$color[color_vec$condition=="m564"]<-hue_pal()(2)[2]
-  # color_vec<-as.data.frame(table(cells.res$my.clusters2))
-  # color_vec$color<-hue_pal()(8)
   bh_dist <- -log10(sim_scores)
   bh_dist <- pmin(bh_dist, 10*max(bh_dist[!is.infinite(bh_dist)]))
   hc <- hclust(as.dist(bh_dist), method = "ward.D")
@@ -265,19 +257,16 @@ for(i in c("GLIPH2","TCRdist",'GIANA',"CDR3b","deepTCR","CDR3ba")){
   #plot
   png(paste0(i,".mice.TRSS.png"), width = 3, height = 3, res = 200,units="in")
   layout(matrix(c(1,1, rep(2,8)), nrow = 10, ncol = 1, byrow = TRUE))
-  # layout(matrix(c(1, 2, 3), nrow = 3, ncol = 1, byrow = TRUE))
   # dendrogram
   par(mar=c(0, 2.7, 3.25, 3)) #must adjust to align dendrogram
   dend <- as.dendrogram(hc)
   dend %>% plot()
-  # dend %>% set("labels", "") %>% plot()
   ## corrplot
   corrplot(sim_scores_cap,
            is.corr = F,
            type="upper", order="original",method = "circle",
            outline = T,
            col = rev(colorRampPalette(c("#67001F", "#B2182B", "#D6604D", "#FFFFFF"))(100)),
-           # col = colorRampPalette(c("white", "red"))(100),
            mar = c(0, 0, 0, 0),
            tl.col = tl_col,
            tl.pos = 'td', #tl.cex = 2,
@@ -297,11 +286,8 @@ for(i in c("GLIPH2","TCRdist",'GIANA',"CDR3b","deepTCR","CDR3ba")){
       mutate(size_cat = factor(size_cat, levels = rev(c("1", "5", "10","50","100","200+"))))
     cluster_size_df <- cells.res %>% 
       filter(condition==j) %>%
-      # filter(seurat_clusters %in% c(0, 1)) %>% 
       group_by(mouse_ID) %>% tally(name = "cluster_size")
     cluster_size_df$cluster_size2<-paste0("n=",cluster_size_df$cluster_size)
-    # condition.labs<-c("B6","564Igi")
-    # names(condition.labs)<-c("AID","m564")
     p<- ggplot(clone_size_df) +
       geom_bar(aes(x = 1, y = clone_size, fill = size_cat),
                stat = "identity", size = 0, color = NA, position = position_fill()) +
@@ -317,8 +303,6 @@ for(i in c("GLIPH2","TCRdist",'GIANA',"CDR3b","deepTCR","CDR3ba")){
             axis.ticks = element_blank(),
             axis.text = element_blank(),
             strip.background=element_rect(fill="white"),
-            # strip.text.y.left = element_text(angle = 0),
-            # strip.text.x = element_text(size = 15),
             strip.text.x = element_text(size = 14, face = "bold"),
             legend.text = element_text(size = 12))
     png(paste0(i,".",j,".mice.pie.png"), width = 10, height = 4, res = 200,units="in")
@@ -351,8 +335,6 @@ for(i in c("GLIPH2","TCRdist",'GIANA',"CDR3b","deepTCR","CDR3ba")){
   for(k in c("m564","AID")){
     meta2<-metadata[metadata$condition==k,]
     meta<-data.frame(mouse_ID=names(table(meta2$mouse_ID))) #blank dataframe of mice (to fill in upcoming loop)
-    # if(k=="AID"){meta$condition<-"WT"}else{meta$condition<-"564Igi"}
-    # meta$my.clusters2<-i
     for(l in c("shannon","simpson","invsimpson")){
       meta[[l]]<-0
       for (j in 1:nrow(meta)) {
@@ -436,12 +418,10 @@ for(i in c("GLIPH2","TCRdist",'GIANA',"CDR3b","deepTCR","CDR3ba")){
   #plot
   png(paste0(i,".clonotype.cluster.TRSS.png"), width = 4, height = 4, res = 200,units="in")
   layout(matrix(c(1,1, rep(2,8)), nrow = 10, ncol = 1, byrow = TRUE))
-  # layout(matrix(c(1, 2, 3), nrow = 3, ncol = 1, byrow = TRUE))
   # dendrogram
   par(mar=c(0,7.6, 5, 3.8)) #must adjust to align dendrogram
   dend <- as.dendrogram(hc)
   dend %>% plot()
-  # dend %>% set("labels", "") %>% plot()
   ## corrplot
   corrplot(sim_scores_cap,
            is.corr = F,
@@ -457,14 +437,12 @@ for(i in c("GLIPH2","TCRdist",'GIANA',"CDR3b","deepTCR","CDR3ba")){
   
   #size pie charts (condition vs mouseID)
   clone_size_df <- cells.res.seurat %>% 
-    # filter(seurat_clusters %in% c(0, 1)) %>% 
     group_by(my.clusters2, TCRgroup, condition) %>% 
     tally(name = "clone_size") %>% 
     mutate(size_cat = cut(clone_size, breaks = c(0, 4, 9, 49, 99, 199, Inf), 
                           labels = c("1", "5", "10","50","100","200+"))) %>% 
     mutate(size_cat = factor(size_cat, levels = rev(c("1", "5", "10","50","100","200+"))))
   cluster_size_df <- cells.res.seurat %>% 
-    # filter(seurat_clusters %in% c(0, 1)) %>% 
     group_by(my.clusters2, condition) %>% tally(name = "cluster_size")
   cluster_size_df$cluster_size2<-paste0("n=",cluster_size_df$cluster_size)
   condition.labs<-c("B6","564Igi")
