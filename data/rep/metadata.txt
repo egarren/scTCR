@@ -1,0 +1,11 @@
+Sample	file_name	sample_id	library_id	batch	mouse_ID	condition	gender	aggr_id	ms.barcoder	..filter..
+T1	T1.txt	T1	T1_M14	run1	m14	AID	M	1	T1_	annot:cdr3length,ndnsize,insertsize,hydropathy,charge,polarity,strength,cdr3contact
+T2	T2.txt	T2	T2_M17	run1	m17	m564	M	2	T2_	annot:cdr3length,ndnsize,insertsize,hydropathy,charge,polarity,strength,cdr3contact
+T3	T3.txt	T3	T3_M11	run2	m11	AID	F	3	T3_	annot:cdr3length,ndnsize,insertsize,hydropathy,charge,polarity,strength,cdr3contact
+T4	T4.txt	T4	T4_M12	run2	m12	AID	F	4	T4_	annot:cdr3length,ndnsize,insertsize,hydropathy,charge,polarity,strength,cdr3contact
+T7	T7.txt	T7	T7_M24	run2	m24	m564	M	5	T7_	annot:cdr3length,ndnsize,insertsize,hydropathy,charge,polarity,strength,cdr3contact
+T8	T8.txt	T8	T8_M13	run2	m13	m564	F	6	T8_	annot:cdr3length,ndnsize,insertsize,hydropathy,charge,polarity,strength,cdr3contact
+T11	T11.txt	T11	T11_M23	run2	m23	AID	M	7	T11_	annot:cdr3length,ndnsize,insertsize,hydropathy,charge,polarity,strength,cdr3contact
+T12	T12.txt	T12	T12_M21	run2	m21	m564	F	8	T12_	annot:cdr3length,ndnsize,insertsize,hydropathy,charge,polarity,strength,cdr3contact
+T34	T34.txt	T34	T34_M34	run3	m34	m564	F	9	T34_	annot:cdr3length,ndnsize,insertsize,hydropathy,charge,polarity,strength,cdr3contact
+T36	T36.txt	T36	T36_M36	run3	m36	AID	M	10	T36_	annot:cdr3length,ndnsize,insertsize,hydropathy,charge,polarity,strength,cdr3contact
