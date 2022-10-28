@@ -17,6 +17,7 @@ library(pheatmap)
 library(phylotools)
 library(ggforce)
 library(ggalluvial)
+library(tidyverse)
 
 load("analyzed.RData")
 
@@ -227,7 +228,7 @@ plist <- lapply(graphs, function(x){
   return(p)
 })
 ggarrange(plotlist=lapply(plist, function(x){x + theme(legend.position = "none")}),nrow=1,common.legend=TRUE,legend="bottom")
-ggsave2("DEG.png",width=12, height=3.5,device="png")
+ggsave2("DEG.png",width=8, height=2.33,device="png")
 
 #MA plot
 T_all.combined@meta.data$all<-"all"
