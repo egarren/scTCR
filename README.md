@@ -28,9 +28,9 @@ DeepTCR v2.1.0
 
 R (v4.1.1) packages
 
-ggalluvial_0.12.3\ 
+ggalluvial_0.12.3\
 harmony_0.1.0\
-Rcpp_1.0.9\            
+Rcpp_1.0.9\
 sp_1.5-0               SeuratObject_4.1.2     Seurat_4.2.0          
 ggseqlogo_0.1          ggforce_0.4.1          phylotools_0.2.4      
 ape_5.6-2              viridis_0.6.2          viridisLite_0.4.1     
