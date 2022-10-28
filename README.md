@@ -43,7 +43,7 @@ viridisLite_0.4.1
 VennDiagram_1.7.3    
 futile.logger_1.4.3  
 limma_3.46.0        
-EnhancedVolcano_1.13.2
+EnhancedVolcano_1.13.2\
 plotly_4.10.0       
 biomaRt_2.46.3        
 plyr_1.8.7         
