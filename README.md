@@ -31,20 +31,48 @@ R (v4.1.1) packages
 ggalluvial_0.12.3\
 harmony_0.1.0\
 Rcpp_1.0.9\
-sp_1.5-0               SeuratObject_4.1.2     Seurat_4.2.0          
-ggseqlogo_0.1          ggforce_0.4.1          phylotools_0.2.4      
-ape_5.6-2              viridis_0.6.2          viridisLite_0.4.1     
-VennDiagram_1.7.3      futile.logger_1.4.3    limma_3.46.0          
-EnhancedVolcano_1.13.2 plotly_4.10.0          biomaRt_2.46.3        
-plyr_1.8.7             forcats_0.5.2          stringr_1.4.1         
-purrr_0.3.4            readr_2.1.3            tidyverse_1.3.2       
-qgraph_1.9.2           cowplot_1.1.1          ggrepel_0.9.1         
-ggpubr_0.4.0.999       immunarch_0.8.0        patchwork_1.1.2       
-dtplyr_1.2.2           dplyr_1.0.10           data.table_1.14.2     
-vegan_2.6-4            lattice_0.20-45        permute_0.9-7         
-xlsx_0.6.5             RColorBrewer_1.1-3     scales_1.2.1          
-gridExtra_2.3          ggplot2_3.3.6          dendextend_1.16.0     
-corrplot_0.92          pheatmap_1.0.12        tidyr_1.2.1           
+sp_1.5-0               
+SeuratObject_4.1.2   
+Seurat_4.2.0          
+ggseqlogo_0.1    
+ggforce_0.4.1     
+phylotools_0.2.4   
+ape_5.6-2          
+viridis_0.6.2      
+viridisLite_0.4.1   
+VennDiagram_1.7.3    
+futile.logger_1.4.3  
+limma_3.46.0        
+EnhancedVolcano_1.13.2
+plotly_4.10.0       
+biomaRt_2.46.3        
+plyr_1.8.7         
+forcats_0.5.2       
+stringr_1.4.1         
+purrr_0.3.4       
+readr_2.1.3        
+tidyverse_1.3.2       
+qgraph_1.9.2       
+cowplot_1.1.1      
+ggrepel_0.9.1         
+ggpubr_0.4.0.999    
+immunarch_0.8.0     
+patchwork_1.1.2       
+dtplyr_1.2.2       
+dplyr_1.0.10       
+data.table_1.14.2     
+vegan_2.6-4        
+lattice_0.20-45     
+permute_0.9-7         
+xlsx_0.6.5          
+RColorBrewer_1.1-3   
+scales_1.2.1          
+gridExtra_2.3       
+ggplot2_3.3.6       
+dendextend_1.16.0     
+corrplot_0.92       
+pheatmap_1.0.12      
+tidyr_1.2.1           
 tibble_3.1.8     
 
 
