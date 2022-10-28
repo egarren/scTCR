@@ -18,7 +18,7 @@ NB: Expected total run time is 3-5 days
 
 ## System requirements and software
 
-Python (v3.7.4) packages\
+<ins>Python (v3.7.4) packages</ins>\
 AlphaFold v2.1.1\
 GIANA v4.1\
 GLIPH v2\
@@ -26,8 +26,7 @@ tcrdist3 v0.2.2\
 DeepTCR v2.1.0
 
 
-R (v4.1.1) packages
-
+<ins>R (v4.1.1) packages</ins>\
 ggalluvial_0.12.3\
 harmony_0.1.0\
 Rcpp_1.0.9\
