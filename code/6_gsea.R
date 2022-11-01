@@ -14,18 +14,14 @@ library(scde)
 library(biomaRt)
 library(GO.db)
 library(DBI)
-# library(VISION)
 library(msigdbr)
-# library(msigdb)
-# library(goseq)
-# library(nicethings)
 library(DOSE)
 library(ggpubr)
 library(AnnotationHub)
 library(SPIA)
 
 #load DEs
-setwd("/n/scratch3/users/e/eha8/Rsessions/20221022_scTfh")
+load("analyzed.RData")
 
 dir.create("./gsea")
 setwd("./gsea")
@@ -38,7 +34,7 @@ ms_ens <- ms_ens[["AH89211"]]
 annotations_ahb <- ensembldb::genes(ms_ens, return.type = "data.frame")
 
 #custom genesets
-load("/home/eha8/metadata/gene.set/custom.gse.RData")
+load("custom.gse.RData")
 pathways<-append(pathways,gse.list) #,CTD
 gse.entrez2<-list(gse.entrez) %>%
   map_df(enframe, name = "gs_name", value="entrez_gene") %>% 
@@ -53,10 +49,6 @@ CTD.entrez$entrez_gene<-as.numeric(as.character(gsub("///.*","",CTD.entrez$entre
 CTD.entrez<-CTD.entrez[!is.na(CTD.entrez$entrez_gene),]
 
 
-setwd("/n/scratch3/users/e/eha8/Rsessions/20221022_scTfh/gsea")
-save.image("temp.pathway.Rdata")
-
-i="DE.res_wt"
 i="res_deg"
 for(i in ls(pattern=".autoimmune.response")){
   DE.df<-get(i)
@@ -81,22 +73,7 @@ for(i in ls(pattern=".autoimmune.response")){
           ggtitle(fgseaRes[order(padj, -abs(NES)), ]$pathway[1])+
           theme(plot.title = element_text(size=4),axis.title=element_text(size=5),axis.text=element_text(size=5))#plot top pathway enrichment
         ggsave2(paste0(i,".",h,".topenrichment.png"),width=2, height=2,device="png")
-        # for(a in c("GO_LEUKOCYTE_CELL_CELL_ADHESION","HALLMARK_GLYCOLYSIS","MODULE_306","KEGG_GLYCOLYSIS_GLUCONEOGENESIS",
-        #            "GSE14415_INDUCED_TREG_VS_FOXP3_KO_INDUCED_TREG_UP","GO_HETEROTYPIC_CELL_CELL_ADHESION","GO_BIOLOGICAL_ADHESION",
-        #            "LEE_DIFFERENTIATING_T_LYMPHOCYTE","HALLMARK_HYPOXIA")){
-        #   plotEnrichment(path[[a]], ranks,ticksSize=0.5)+ggtitle(a)+labs(y="Enrichment Score",x="Rank")+
-        #     theme(plot.title = element_text(size=5,hjust=0.5),axis.title=element_text(size=5),axis.text=element_text(size=5))#plot top pathway enrichment
-        #   ggsave2(paste0(i,".",h,".",a,".png"),width=2, height=2,device="png")
-        # }
-        #gsea table
-        # topUp <- head(fgseaRes %>% dplyr::filter(ES > 0) %>% dplyr::top_n(5, wt=-padj),n=5)
-        # topDown <- head(fgseaRes %>% dplyr::filter(ES < 0) %>% top_n(5, wt=-padj),n=5)
-        # topPathways <- bind_rows(topUp, topDown) %>% arrange(-ES)
-        # png(paste0(i,".",h,".gsea.table.png"),width=10,height=4,units="in",res=200)
-        # plotGseaTable(path[topPathways$pathway], ranks, fgseaRes, gseaParam = 0.5)
-        # dev.off()
         write.csv(fgseaRes[order(padj, -abs(NES)), ][,1:7],file=paste0(i,".gsea.results.csv"))
-        # write.csv(topPathways[,1:7],file=paste0(i,".gsea.table.csv"))
       }}
     }
     
@@ -112,9 +89,7 @@ for(i in ls(pattern=".autoimmune.response")){
     geneList <- sort(ranks, decreasing = TRUE)
     #topGO
     ggo.table<-groupGO(gene=sigGenes,OrgDb=org.Mm.eg.db,ont="BP",level=4,readable=T) #BP (biological process), MF (molecular function), CC (cellular componnent)
-    # ggo.table2 <- clusterProfiler::simplify(ggo.table, cutoff=0.7, by="p.adjust", select_fun=min) #dropGO, gofilter
     if(!is.null(ggo.table)){if(dim(ggo.table)[1]!=0){
-      # write.csv(ggo.table,file=paste0(i,".gGO.table.csv"))
       barplot(ggo.table, drop=TRUE, showCategory=6)+ggtitle(i)
       ggsave2(paste0(i,".gGO.bar.png"),width=8, height=2,device="png")
     }}
@@ -149,20 +124,7 @@ for(i in ls(pattern=".autoimmune.response")){
         clusterProfiler::cnetplot(tab, categorySize="pvalue", foldChange=geneList,node_label="gene")+
           guides(size=F)+scale_color_gradient2(name="LogFC")
         ggsave2(paste0(i,".",j,".cnet2.png"),width=4.5, height=3.5,device="png")
-        # plot<-try(emapplot(tab,showCategory=15)+ggtitle(i))
-        # if(!is(plot,"try-error")){plot}else{
-        #   x2<-pairwise_termsim(tab)
-        #   emapplot(x2)+ggtitle(i)
-        # }
-        # ggsave2(paste0(i,".",j,".emap.png"),width=5, height=4,device="png")
-        # if(j %in% c("gsea")){#"eGO",
-        #   png(paste0(i,".",j,".graph.png"),width=20,height=15,units="in",res=200)
-        #   clusterProfiler::plotGOgraph(tab)
-        #   dev.off()
-        # }
         if(j %in% c("gsea","kk2","egmt2","ctd2")){
-          # clusterProfiler::ridgeplot(tab, showCategory=6)+ggtitle(i)
-          # ggsave2(paste0(i,".",j,".ridge.png"),width=7, height=4,device="png")
           clusterProfiler::gseaplot(tab,geneSetID=tab$ID[1],title=tab$Description[1])
           ggsave2(paste0(i,".",j,".plot.png"),width=4, height=5,device="png")
           for(m in 1:10){
@@ -173,9 +135,6 @@ for(i in ls(pattern=".autoimmune.response")){
         if(j %in% c("kk","kk2","davidKEGG")){
           pathview(gene.data = geneList, pathway.id = tab$ID[2], species = "mmu", out.suffix=paste0(i,".",j,".pathview"))
         }
-        # if(j %in% c("mkk","mkk2")){
-        #   pathview(gene.data = geneList, pathway.id = gsub("M","",tab$ID[1]), species = "ko", out.suffix=paste0(i,".",j,".pathview"))
-        # }
       }}
     }
   }
