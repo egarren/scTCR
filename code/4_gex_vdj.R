@@ -452,3 +452,4 @@ for(i in c(ls(pattern="exp.vs.expandedDE"),ls(pattern="expandedDE.ms"))){
   }
 }
   
+save.image("analyzed.RData")                                                                          
