@@ -21,7 +21,7 @@ library(AnnotationHub)
 library(SPIA)
 
 #load DEs
-load("analyzed.RData")
+load("analyzed2.RData")
 
 dir.create("./gsea")
 setwd("./gsea")
