@@ -204,7 +204,10 @@ for(i in public.clones$Var1){
 }
 save.image("temp.vdj.analyzed2.RData")
 
-
+###TCR-A vs TCR-E
+Idents(T_all.combined) <- "cdr3_ba"
+res_deg<-FindMarkers(T_all.combined, ident.1 = "CASSRDWGGLEYF+CAAGSPNYSNNRLTL", ident.2 = "CASSIGNNNQAPLF+CAMRDTNAYKVIF",
+                     min.pct=0,logfc.threshold = -Inf,test.use = "MAST")
 
 
 # identifying expanded clones
@@ -273,8 +276,6 @@ save(list=c(ls(pattern="DE"),ls(pattern=".markers"),ls(pattern=".response"),"clu
 save.image("vdj.analyzed.RData")
 
 #Volcano Plots
-
-#publication
 res<-lapply(ls(pattern = ".autoimmune.response")[1], get)
 names(res)<-ls(pattern = ".autoimmune.response")[1]
 thresh_p_val_adj <- 0.05
@@ -319,6 +320,38 @@ for(i in graphs){
   ggsave2(paste0(i,".volcano.png"),width=3, height=3,device="png")
 }
 
+
+#TCRA vs TCRE
+thresh_p_val_adj <- 0.05
+thresh_lfc <- 0.2
+plt_df<-res_deg %>% rownames_to_column(var = "gene") %>% 
+  filter(!(grepl("Rps", gene) | grepl("Rpl", gene)| grepl("mt.", gene)| grepl("H2.", gene))) %>% 
+  mutate(up_in = ifelse(p_val_adj >= thresh_p_val_adj, "NS", ifelse(avg_log2FC > thresh_lfc, "TCR-A", ifelse(avg_log2FC < -thresh_lfc, "TCR-E", "NS"))),
+         rank_pval = rank(p_val_adj), rank_lfc_inc = rank(avg_log2FC), rank_lfc_dec = rank(-abs(avg_log2FC)),
+         lp = -log10(p_val_adj)) %>% 
+  arrange(-abs(avg_log2FC))
+if (sum(plt_df$up_in != "NS") >= 30) {
+  plt_df <- plt_df %>% mutate(gene_label = ifelse(up_in != "NS" & (rank_pval < 10 | rank_lfc_inc < 10 | rank_lfc_dec < 10), gene, NA))
+} else {
+  plt_df <- plt_df %>% mutate(gene_label = ifelse((up_in != "NS" | rank_pval < 10 | rank_lfc_inc < 10 | rank_lfc_dec < 10), gene, NA))
+}
+plt_df$lp <- pmin(plt_df$lp, 20)
+plt_df$avg_log2FC <- pmin(plt_df$avg_log2FC, 2)
+ggplot(plt_df, aes(x = avg_log2FC, y = lp, color = up_in, label = gene_label)) +
+  geom_point(size = 0.5) +
+  geom_text_repel(size = 2, segment.size = 0.1, seed = 1, show.legend=F) +
+  scale_color_manual(values = c("TCR-A" = "#70AD47", "TCR-E" = "#FFC000", "NS" = "grey80")) +
+  scale_x_continuous(limits = c(-max(plt_df$avg_log2FC), max(plt_df$avg_log2FC)), expand = expansion(mult = c(0.01, 0.01))) +
+  scale_y_continuous(limits = c(0, max(plt_df$lp)), expand = expansion(mult = c(0.05, 0.01))) +
+  # labs(title = x, caption = paste0("p_val_adj < ", thresh_p_val_adj, ", fold change > ", sprintf("%.2f", 2^thresh_lfc))) +
+  labs(title = i, color = "Up-regulated in:", y = NULL, x =NULL) +
+  theme_bw() +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_blank(),legend.position="bottom",legend.title=element_text(size=8),
+        plot.title = element_text(size = 8, hjust = 0.5, face = "bold"),
+        axis.title = element_text(size = 10, color = "black"))
+ggsave2("tcra_tcre_volcano.png",width=3, height=3,device="png")
+
 #clone heatmap
 public.clones
 clone<-public.clones$Var1[1]
@@ -336,6 +369,16 @@ genes<-rownames(deg.df)[deg.df$p_val_adj<0.1]
 genes<-head(rownames(deg.df),n=50)
 DoHeatmap(object = df, features = genes, label = F)  #slim.col.label to TRUE prints cluster IDs instead of cells
 ggsave2(paste0(clone,".heatmap.png"),width=5, height=4,device="png")
+
+#TCR-A vs TCR-E heatmap
+clone<-c("CASSRDWGGLEYF+CAAGSPNYSNNRLTL", "CASSIGNNNQAPLF+CAMRDTNAYKVIF")
+Idents(T_all.combined) <- "cellID"
+barcodes<-T_all.combined@meta.data$cellID[T_all.combined@meta.data$cdr3_ba %in% clone]
+df<-subset(T_all.combined, idents=barcodes)
+Idents(df) <- "cdr3_ba" #setting idents to condition metadata
+genes<-head(rownames(res_deg),n=50)
+DoHeatmap(object = df, features = genes, label = F)  #slim.col.label to TRUE prints cluster IDs instead of cells
+ggsave2("tcra_vs_tcre.heatmap.png",width=7, height=4,device="png")
 
 
 #Scatter Plots
