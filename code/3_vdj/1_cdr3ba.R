@@ -19,14 +19,14 @@ quantile_breaks <- function(xs, n = 100) {
 
 load("clone_ba.data.RData")
 
-metadata<-read.csv("/home/eha8/metadata/Tcell.metadata.csv", header=T) #define path
+metadata<-read.csv("Tcell.metadata.csv", header=T) #define path
 metadata[] <- lapply(metadata, as.character)
 
 #load cdr3 data
 mice<-metadata$T.sampleID
 for (i in mice){
-  csv.path<-paste0("/n/scratch3/users/e/eha8/Rsessions/20221022_scTfh/cellranger/",i,"/outs/per_sample_outs/",i,"/vdj_t/filtered_contig_annotations.csv")
-  fasta.path<-paste0("/n/scratch3/users/e/eha8/Rsessions/20221022_scTfh/cellranger/",i,"/outs/per_sample_outs/",i,"/vdj_t/filtered_contig.fasta")
+  csv.path<-paste0("/cellranger/",i,"/outs/per_sample_outs/",i,"/vdj_t/filtered_contig_annotations.csv")
+  fasta.path<-paste0("/cellranger/",i,"/outs/per_sample_outs/",i,"/vdj_t/filtered_contig.fasta")
   df<-merge(read.csv(csv.path, header=T),read.fasta(fasta.path),by.x="contig_id",by.y="seq.name")
   colnames(df)[colnames(df)=="length"]<-"vdj_length"
   # df$T.sampleID<-i
@@ -270,7 +270,6 @@ annot.row <-annot.row %>% remove_rownames %>% column_to_rownames(var="cdr3_ba")
 p <- pheatmap(plt_mtx_scale_cap, 
               cluster_rows = TRUE,cluster_cols = TRUE,clustering_method = "ward.D2",show_rownames = F, treeheight_row=5,treeheight_col=5,
               color = rev(colorRampPalette(c("#67001F", "#B2182B", "#D6604D", "#FFFFFF"))(100)),
-              # color = colorRampPalette(c("white", "red"))(100),
               fontsize = 8,fontsize_col = 8,fontsize_row=8,
               annotation_col=annot.col,annotation_names_col=F,annotation_names_row=F,
               annotation_colors=list(Cluster=c("TFR"=hue_pal()(8)[1],"Sostdc1"=hue_pal()(8)[2],"TFH-Tcf1"=hue_pal()(8)[3],"TFH-Exhausted"=hue_pal()(8)[4],
