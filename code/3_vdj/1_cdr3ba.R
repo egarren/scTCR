@@ -263,18 +263,22 @@ plt_mtx_scale<-plt_mtx/rowSums(plt_mtx)*100
 plt_mtx_scale_cap <- pmin(plt_mtx_scale, quantile(plt_mtx_scale, 0.94))
 annot.col<-data.frame(Cluster=unique(cells.seurat$my.clusters2))
 rownames(annot.col)<-annot.col$Cluster
-annot.row<-clone_sizes.seurat[clone_sizes.seurat$cdr3_ba %in% rownames(plt_mtx_scale_cap), ] %>% remove_rownames %>% column_to_rownames(var="cdr3_ba")
+annot.row<-clone_sizes.seurat[clone_sizes.seurat$cdr3_ba %in% rownames(plt_mtx_scale_cap), ] 
+annot.row<-merge(annot.row,clone_condition,by="cdr3_ba",keep=F)
+names(annot.row)[names(annot.row) == "condition"] <- "BMChimera"
+annot.row <-annot.row %>% remove_rownames %>% column_to_rownames(var="cdr3_ba")
 p <- pheatmap(plt_mtx_scale_cap, 
-              cluster_rows = TRUE,cluster_cols = TRUE,clustering_method = "ward.D2",show_rownames = F, treeheight_row=0,treeheight_col=0,
+              cluster_rows = TRUE,cluster_cols = TRUE,clustering_method = "ward.D2",show_rownames = F, treeheight_row=5,treeheight_col=5,
               color = rev(colorRampPalette(c("#67001F", "#B2182B", "#D6604D", "#FFFFFF"))(100)),
               # color = colorRampPalette(c("white", "red"))(100),
               fontsize = 8,fontsize_col = 8,fontsize_row=8,
               annotation_col=annot.col,annotation_names_col=F,annotation_names_row=F,
               annotation_colors=list(Cluster=c("TFR"=hue_pal()(8)[1],"Sostdc1"=hue_pal()(8)[2],"TFH-Tcf1"=hue_pal()(8)[3],"TFH-Exhausted"=hue_pal()(8)[4],
-                                               "TFH-Activated"=hue_pal()(8)[5],"TFH-CM"=hue_pal()(8)[6],"TFH-Effector"=hue_pal()(8)[7],"TFH-ISG"=hue_pal()(8)[8])),
-              # annotation_row=annot.row,
+                                               "TFH-Activated"=hue_pal()(8)[5],"TFH-CM"=hue_pal()(8)[6],"TFH-Effector"=hue_pal()(8)[7],"TFH-ISG"=hue_pal()(8)[8]),
+                                     BMChimera=c("B6"=hue_pal()(2)[1],"564Igi"=hue_pal()(2)[2],"Both"=alpha("grey",0.5))),
+              annotation_row=annot.row,
               silent = T)
-png("clonotype.cluster.heatmap.all.png", width = 5, height = 7, res = 200,units="in")
+png("clonotype.cluster.heatmap.all.png", width = 6, height = 6, res = 200,units="in")
 grid.arrange(p$gtable)
 dev.off()
 
