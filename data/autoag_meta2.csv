@@ -1,0 +1,100 @@
+﻿Ag,Type,Class
+PDC-E2,GI/Endocrine,IgG
+PDH,GI/Endocrine,IgG
+TG,GI/Endocrine,IgG
+TPO,GI/Endocrine,IgG
+BPI,Inflammatory,IgG
+C1q,Inflammatory,IgG
+HSP 70,Inflammatory,IgG
+GBM dissociated,Inflammatory,IgG
+EJ,Myositis/Overlap syndromes,IgG
+JO1,Myositis/Overlap syndromes,IgG
+PL-12,Myositis/Overlap syndromes,IgG
+PL-7,Myositis/Overlap syndromes,IgG
+PM/Scl-75,Myositis/Overlap syndromes,IgG
+SRP54,Myositis/Overlap syndromes,IgG
+CENP A,Scleroderma,IgG
+Fibrillarin,Scleroderma,IgG
+POLR3H,Scleroderma,IgG
+RPP14 (Th/To),Scleroderma,IgG
+"Scl-70, full-length",Scleroderma,IgG
+"Scl-70, truncated",Scleroderma,IgG
+U11/U12,Scleroderma,IgG
+CTGF,SLE/Sjögren's,IgG
+La/SSB,SLE/Sjögren's,IgG
+Ribo P0,SLE/Sjögren's,IgG
+Ribo P2,SLE/Sjögren's,IgG
+Ro60/SSA (recombinant),SLE/Sjögren's,IgG
+Ro60/SSA (bovine),SLE/Sjögren's,IgG
+Sm/RNP,SLE/Sjögren's,IgG
+SmD2,SLE/Sjögren's,IgG
+Smith,SLE/Sjögren's,IgG
+U1-snRNP A,SLE/Sjögren's,IgG
+U1-snRNP C,SLE/Sjögren's,IgG
+U1 B/B',SLE/Sjögren's,IgG
+PDC-E2,GI/Endocrine,IgG2a
+PDH,GI/Endocrine,IgG2a
+TG,GI/Endocrine,IgG2a
+TPO,GI/Endocrine,IgG2a
+BPI,Inflammatory,IgG2a
+C1q,Inflammatory,IgG2a
+HSP 70,Inflammatory,IgG2a
+GBM dissociated,Inflammatory,IgG2a
+EJ,Myositis/Overlap syndromes,IgG2a
+JO1,Myositis/Overlap syndromes,IgG2a
+PL-12,Myositis/Overlap syndromes,IgG2a
+PL-7,Myositis/Overlap syndromes,IgG2a
+PM/Scl-75,Myositis/Overlap syndromes,IgG2a
+SRP54,Myositis/Overlap syndromes,IgG2a
+CENP A,Scleroderma,IgG2a
+Fibrillarin,Scleroderma,IgG2a
+POLR3H,Scleroderma,IgG2a
+RPP14 (Th/To),Scleroderma,IgG2a
+"Scl-70, full-length",Scleroderma,IgG2a
+"Scl-70, truncated",Scleroderma,IgG2a
+U11/U12,Scleroderma,IgG2a
+CTGF,SLE/Sjögren's,IgG2a
+La/SSB,SLE/Sjögren's,IgG2a
+Ribo P0,SLE/Sjögren's,IgG2a
+Ribo P2,SLE/Sjögren's,IgG2a
+Ro60/SSA (recombinant),SLE/Sjögren's,IgG2a
+Ro60/SSA (bovine),SLE/Sjögren's,IgG2a
+Sm/RNP,SLE/Sjögren's,IgG2a
+SmD2,SLE/Sjögren's,IgG2a
+Smith,SLE/Sjögren's,IgG2a
+U1-snRNP A,SLE/Sjögren's,IgG2a
+U1-snRNP C,SLE/Sjögren's,IgG2a
+U1 B/B',SLE/Sjögren's,IgG2a
+PDC-E2,GI/Endocrine,IgG2c
+PDH,GI/Endocrine,IgG2c
+TG,GI/Endocrine,IgG2c
+TPO,GI/Endocrine,IgG2c
+BPI,Inflammatory,IgG2c
+C1q,Inflammatory,IgG2c
+HSP 70,Inflammatory,IgG2c
+GBM dissociated,Inflammatory,IgG2c
+EJ,Myositis/Overlap syndromes,IgG2c
+JO1,Myositis/Overlap syndromes,IgG2c
+PL-12,Myositis/Overlap syndromes,IgG2c
+PL-7,Myositis/Overlap syndromes,IgG2c
+PM/Scl-75,Myositis/Overlap syndromes,IgG2c
+SRP54,Myositis/Overlap syndromes,IgG2c
+CENP A,Scleroderma,IgG2c
+Fibrillarin,Scleroderma,IgG2c
+POLR3H,Scleroderma,IgG2c
+RPP14 (Th/To),Scleroderma,IgG2c
+"Scl-70, full-length",Scleroderma,IgG2c
+"Scl-70, truncated",Scleroderma,IgG2c
+U11/U12,Scleroderma,IgG2c
+CTGF,SLE/Sjögren's,IgG2c
+La/SSB,SLE/Sjögren's,IgG2c
+Ribo P0,SLE/Sjögren's,IgG2c
+Ribo P2,SLE/Sjögren's,IgG2c
+Ro60/SSA (recombinant),SLE/Sjögren's,IgG2c
+Ro60/SSA (bovine),SLE/Sjögren's,IgG2c
+Sm/RNP,SLE/Sjögren's,IgG2c
+SmD2,SLE/Sjögren's,IgG2c
+Smith,SLE/Sjögren's,IgG2c
+U1-snRNP A,SLE/Sjögren's,IgG2c
+U1-snRNP C,SLE/Sjögren's,IgG2c
+U1 B/B',SLE/Sjögren's,IgG2c
