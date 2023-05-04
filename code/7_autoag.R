@@ -56,13 +56,12 @@ for(j in c("BMchim.564-Icos.RAG-TCRA","BMchim.564-Icos.RAG-TCRB","BMchim.564-Ico
         test<-try(wilcox.test(df2[[i]] ~ df2$tx2, data = df2))
         test2<-try(t.test(df2[[i]] ~ df2$tx2, data = df2))
         if(!is(test,"try-error")&!is(test2,"try-error")&!is.na(test$p.value)){
-          ttest.list[[i]]<-c(p.val=test$p.value,test2$estimate)
+          ttest.list[[i]]<-c(p.adj=test$p.value,test2$estimate)
           ttest.pval.df$tx2[ttest.pval.df$test==i]<-test$p.value
         }
       }
       ttest.df<-as.data.frame(purrr::map_dfr(lapply(ttest.list,unlist), ~as_tibble(t(.))))
       rownames(ttest.df)<-names(ttest.list)
-      ttest.df$p.adj<-ttest.df$p.val
       ttest.df<-ttest.df[order(ttest.df$p.adj),]
       ttest.df$log2FC<-log2(ttest.df[[3]]/ttest.df[[2]])
       assign(paste0(k,"vs",j,".ttest.df"),ttest.df)
