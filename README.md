@@ -1,6 +1,6 @@
 # scTCR
 
-This repository contains the code used in our single cell sequencing paper: "T cell help shapes B cell tolerance"
+This repository contains the code used in our single cell sequencing [paper](https://pubmed.ncbi.nlm.nih.gov/38363829/): "T cell help shapes B cell tolerance"
 
 ## Installation guide
 Install dependencies listed below
